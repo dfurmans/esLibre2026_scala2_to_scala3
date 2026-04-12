@@ -81,8 +81,7 @@ layout: center
 
 <!-- 
 NARRATIVE HOOK:
-Start by describing the stability of 2.13 and the "fear" of moving. 
-Mention the 'negotiation' as the first boss fight.
+
 -->
 
 ---
@@ -97,25 +96,27 @@ layout: center
     <h3 class="mb-4 text-orange-400">El Núcleo</h3>
     <ul class="space-y-4 text-left">
       <li><span class="opacity-50 text-sm italic text-left">Lenguaje:</span> <br> <b class="text-left">Scala 2.13.x</b></li>
-      <li><span class="opacity-50 text-sm italic text-left">Build Tool:</span> <br> <b class="text-left">SBT</b> (El corazón de todo)</li>
-      <li><span class="opacity-50 text-sm italic text-left">Arquitectura:</span> <br> <b class="text-left">Microservicios en la Nube</b></li>
+      <li><span class="opacity-50 text-sm italic text-left">Build Tool:</span> <br> <b class="text-left">SBT</b></li>
+      <li><span class="opacity-50 text-sm italic text-left">Arquitectura:</span> <br> <b class="text-left">Microservicios</b></li>
+      <li><span class="opacity-50 text-sm italic text-left">Infra/Entrega</span> <br> <b class="text-left">CaaS</b></li>
     </ul>
   </div>
 
   <div v-click v-mark.bracket.right.blue>
-    <h3 class="mb-4 text-blue-400">Ecosistema FP</h3>
+    <h3 class="mb-4 text-blue-400">Librerías</h3>
     <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">cats-core</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">cats-effect</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">fs2 / kafka</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">http4s</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">smithy4s</div>
+      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">...</div>
     </div>
   </div>
 </div>
 
 <div v-after class="mt-12 text-center opacity-70 italic text-sm">
-  Un ecosistema potente, pero con una complejidad cognitiva alta... <br>
-  <span v-click class="text-orange-400 not-italic font-bold">¿Cómo lo subimos al siguiente nivel?</span>
+  Todo muy potente, pero con una complejidad cognitiva alta... <br>
 </div>
 
 ---
