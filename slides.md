@@ -88,11 +88,12 @@ NARRATIVE HOOK:
 layout: center
 ---
 
-# 🎒 Nuestra Mochila de Viaje
+# 🎒 Un viaje de mil millas comienza con un solo paso
 ### El Stack Tecnológico (Scala 2.13.x)
 
 <div grid="~ cols-2 gap-10" class="mt-10 text-left">
-  <div v-mark.bracket.left.orange>
+
+  <div v-click v-mark.bracket.left.orange>
     <h3 class="mb-4 text-orange-400">El Núcleo</h3>
     <ul class="space-y-4 text-left">
       <li><span class="opacity-50 text-sm italic text-left">Lenguaje:</span> <br> <b class="text-left">Scala 2.13.x</b></li>
@@ -102,20 +103,29 @@ layout: center
     </ul>
   </div>
 
-  <div v-click v-mark.bracket.right.blue>
-    <h3 class="mb-4 text-blue-400">Librerías</h3>
-    <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+  <div v-click v-mark.bracket.right.yellow>
+    <h3 class="mb-2 text-blue-400">Librerías App</h3>
+    <div class="grid grid-cols-2 gap-2 text-xs font-mono mb-4">
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">cats-core</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">cats-effect</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">fs2 / kafka</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">http4s</div>
       <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">smithy4s</div>
-      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">...</div>
+      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">pureconfig-core</div>
+      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">circe-core</div>
+      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">redis4cats-effects</div>
+      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">doobie-core</div>
+      <div class="p-2 border border-blue-500/30 rounded bg-blue-500/5">slick</div>
+    </div>
+    <h3 class="mb-2 text-green-400">Librerías Test</h3>
+    <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+      <div class="p-2 border border-green-500/30 rounded bg-green-500/5">cucumber-scala</div>
+      <div class="p-2 border border-green-500/30 rounded bg-green-500/5">karate</div>
+      <div class="col-span-2 p-2 border border-green-500/30 rounded bg-green-500/5">testcontainers-scala</div>      
     </div>
   </div>
 </div>
-
-<div v-after class="mt-12 text-center opacity-70 italic text-sm">
+<div v-after class="mt-08 text-center opacity-70 italic text-sm">
   Todo muy potente, pero con una complejidad cognitiva alta... <br>
 </div>
 
@@ -123,7 +133,7 @@ layout: center
 layout: center
 ---
 
-# ⚖️ Principios de la Migración
+# ⚖️ Un acuerdo de la Migración
 ### De la negociación a la ejecución
 
 <div grid="~ cols-2 gap-x-12 gap-y-8" class="mt-8 text-left text-sm">
@@ -148,7 +158,10 @@ layout: center
 
   <div v-click>
     <h3 class="text-purple-400 font-bold mb-2 text-left">🌉 Construyendo el Puente</h3>
-    <p class="text-xs text-left">Uso estratégico de <code>for3Use2_13</code> para mantener la paz con el ecosistema de librerías.</p>
+    <p class="text-xs text-left">Uso estratégico de CrossVersion.for3Use2_13
+    <code>
+    libraryDependencies += ("org.bar" %% "bar" % "1.0.0").cross(CrossVersion.for3Use2_13)
+    </code> para mantener la paz con el ecosistema de librerías.</p>
   </div>
 </div>
 
@@ -167,15 +180,14 @@ layout: center
 <div grid="~ cols-2 gap-10" class="mt-10">
   <div v-click class="p-6 border-b-4 border-orange-400 bg-orange-400/5 rounded-t-xl text-left">
     <h2 class="text-orange-400 mb-4 text-left">Fase A: Básica</h2>
-    <p class="text-sm text-left"><b>Migración minima.</b> <br> El objetivo es que compile y pase los tests. Cero cambios de sintaxis innecesarios para reducir el ruido en los PRs.</p>
+    <p class="text-sm text-left"><b>Migración minima.</b> <br> El objetivo es que compile y pase los tests. Cero cambios de sintaxis innecesarios para reducir el ruido en los MRs/PRs.</p>
   </div>
 
   <div v-click class="p-6 border-b-4 border-blue-400 bg-blue-400/5 rounded-t-xl text-left">
     <h2 class="text-blue-400 mb-4 text-left">Fase B: Idiomática</h2>
-    <p class="text-sm text-left"><b>Modernización Real.</b> <br> Aquí es donde entra la diversión: <code>given/using</code>, <code>enums</code> y nueva sintaxis. Refactorización para "pensar en Scala 3".</p>
+    <p class="text-sm text-left"><b>Modernización Real.</b> <br> Aquí es donde entra la diversión: <code>given/using</code>, <code>enums</code> y nueva sintaxis. Refactorización para "pensar en Scala 3" y utilzar todas sus novedades</p>
   </div>
 </div>
-
 
 
 ---
@@ -183,7 +195,7 @@ layout: center
 ---
 
 # 🛠️ sbt-scala3-migrate
-### El flujo de trabajo en 4 comandos
+### El flujo de trabajo en 4 comandos SBT (gracias a sbt-scala3-migrate)
 
 
 Añade esta línea en tu archivo project/plugins.sbt:
