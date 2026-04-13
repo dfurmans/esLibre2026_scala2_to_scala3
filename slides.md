@@ -227,81 +227,112 @@ layout: center
 # Implicits ➔ Contextual Abstractions
 ### El concepto lo más sobrecargado en Scala 2.x
 
-* Contexto ``` *()*```
-* Instancias de Type Class ```implicit val stringShow: Formatter[T] ``` 
-* Extensions methods ```implicit class ```
-* Conversion de tipos automatica ``` implicit def ...```
-* implicitly Obtener instancias del contexto ```scala  val formatter = implicitly[Formatter[T]] ```
+```
+trait Formatter[T] { // Type Class
+  def format(value: T): String
+}
+```
+
+* Contexto ``` def printFormatted[T](value: T)(implicit formatter: Formatter[T])```
+* Instancias de Type Class ```implicit val intFormatter: Formatter[Int] = ??? ``` 
+* Extensions methods ```implicit class FormatterOps[T](value: T) { ```
+* Conversion de tipos automatica 
+``` 
+import scala.language.implicitConversions
+implicit def intToString(i: Int): String = i.toString
+```
+
+* implicitly Obtener instancias del contexto ```val formatter = implicitly[Formatter[T]] ```
 
 
 ---
 
 # Implicits ➔ Contextual Abstractions
-### El concepto lo más sobrecargado en Scala 2.x
+### Scala 3.x
 
-
-<div grid="~ cols-2 gap-4">
-<div>
-<h4 class="text-orange-400 mb-2">Scala 2: ¿Cómo?</h4>
-
-```scala
-implicit val logger: Logger = ...
-
-def doWork(implicit log: Logger) = 
-  log.info("Done")
+```
+trait Formatter[T] { // Type Class
+  def format(value: T): String
+}
 ```
 
-<p class="text-[10px] opacity-60 mt-4">Confusión entre el "qué" y el "cómo".</p>
-</div>
-
-<div v-click>
-<h4 class="text-green-400 mb-2">Scala 3: ¿Qué necesito?</h4>
-
-```scala
-given logger: Logger = ...
-
-def doWork(using log: Logger) = 
-  log.info("Done")
+* Contexto 
+``` 
+def printFormatted[T](value: T)(using formatter: Formatter[T]): Unit = {
+  println(formatter.format(value))
+}
 ```
 
-<p class="text-[10px] opacity-60 mt-4 italic">Claro, conciso y tipado.</p>
-</div>
-</div>
+* Instancias de Type Class  ``` given Formatter[Int] = (value: Int) => s"Número: $value" ``` 
 
-<div v-click class="mt-8 p-4 bg-blue-500/10 border border-blue-500/20 rounded">
-  <b>Extension Methods:</b> Adiós a <code>implicit class</code>. <br>
-  <code>extension (s: String) def asMsgUID: MsgUID = s.taggedWith[UID] </code>
-</div>
 
---- 
+---
+
+# Implicits ➔ Contextual Abstractions
+### Scala 3.x
+
+```
+trait Formatter[T] { // Type Class
+  def format(value: T): String
+}
+```
+
+* Extensions methods 
+
+``` extension [T](value: T)(using formatter: Formatter[T]) def formatted: String = formatter.format(value) ```
+
+* Conversion de tipos automatica  
+``` given Conversion[Int, String] with def apply(i: Int): String = i.toString ```
+
+Implicitly Obtener instancias del contexto ```val formatter = summon[Formatter[T]] ```
+
+---
+
+# Implicits ➔ Contextual Abstractions
+### ¡Notas!
+
+=>> los `given` deben importarse explicitamente ```import com.your.domain.given```
+
+=>> scalacOptions `"3.3-migration"`  - un ayudante para normalizar la migración
+
+---
 
 # Macros & Metaprogramming
-### El gran muro de la migración
+### Un paso por una montaña muy picosa
 
 <div class="space-y-4">
   <div v-click class="p-4 border-l-4 border-red-500 bg-red-500/5">
     <h4 class="font-bold">Incompatibilidad Total</h4>
-    <p class="text-sm">Las macros de Scala 2 (basadas en reflexión del compilador) no funcionan en Scala 3 (basadas en TASTy).</p>
+    <p class="text-sm">Las macros de Scala 2 (basadas en reflexión del compilador) no funcionan en Scala 3 (basadas en TASTY Typed Abstract Syntax Trees).</p>
   </div>
 
   <div v-click class="p-4 border-l-4 border-orange-500 bg-orange-500/5">
     <h4 class="font-bold">Estrategia de Supervivencia</h4>
     <ul class="text-xs space-y-2">
-      <li>Flag: <code>-Xignore-scala2-macros</code> para poder seguir compilando.</li>
+      <li>Flag: <code>-Xignore-scala2-macros</code> para poder seguir compilando - CUIDADO es exclusivamente para migración</li>
       <li>Dependencia en librerías que ya han migrado su derivación (Circe, Smithy4s).</li>
       <li>El compilador de Scala 3 es mucho más capaz de derivar tipos sin macros personalizadas.</li>
     </ul>
   </div>
 </div>
 
+
 ---
 
-# Data Modeling: Opaque Types & Enums
-### Seguridad sin coste en runtime
+# Macros & Metaprogramming
+### Un paso por una montaña muy picosa
+
+1. excluir .tasty  los archivos .tasty
+2. ...
+
+---
+
+# Data Modeling: Opaque Types & Enums/ADTs
+### Seguridad sin boxing al cruzar fronteras genéricas
 
 <div grid="~ cols-2 gap-10">
 <div>
-  <h3 class="text-blue-400 mb-4">Opaque Types</h3>
+  <h3 class="text-red-400 mb-4">Opaque Types</h3>
   <p class="text-xs">Adiós a los Value Classes (<code>AnyVal</code>) y su overhead.</p>
   
 ```scala {all}
@@ -318,36 +349,12 @@ object MsgUID:
   <p class="text-xs">Sustitución real de <code>sealed abstract class</code>.</p>
 
 ```scala {all}
-enum SocketNumber:
-  case S4, S5, S6, S7
+enum DomainError(val errorCode: String, val errorMessage: String) extends NoStackTrace:
+  case UnknownError(msg: String)             extends DomainError("E000", msg)
+  case InvalidDomainCode                  extends DomainError("E001", "Invalid Domain Code")
 ```
 <p class="text-[10px] mt-2 opacity-60 italic">Primer nivel de soporte para ADTs complejos.</p>
 </div>
-</div>
-
----
-
-# El Gran Salto: De Akka a Pekko
-### Un cambio forzado por la licencia, pero necesario
-
-<div class="mt-8">
-  <p class="mb-6">No solo hemos cambiado de lenguaje, hemos cambiado de <b>ecosistema fundamental</b>:</p>
-  
-  <div grid="~ cols-2 gap-4">
-    <div class="p-4 bg-gray-500/10 rounded border border-gray-500/20 text-center">
-      <div class="text-red-400 font-mono mb-2">OLD (Scala 2)</div>
-      <div class="text-sm">Akka<br>Akka HTTP<br>Play 2.8</div>
-    </div>
-    
-    <div v-click class="p-4 bg-blue-500/10 rounded border border-blue-500/20 text-center">
-      <div class="text-blue-400 font-mono mb-2">NEW (Scala 3)</div>
-      <div class="text-sm">Apache Pekko 1.2<br>Pekko HTTP<br>Play Framework 3.0</div>
-    </div>
-  </div>
-
-  <div v-click class="mt-10 p-4 bg-orange-400/5 border-l-4 border-orange-400 text-xs italic">
-    <b>Reto:</b> Migrar todos los namespaces (com.typesafe ➔ org.apache.pekko) y asegurar que los actores funcionen bajo el nuevo tipado de Scala 3.
-  </div>
 </div>
 
 ---
@@ -370,19 +377,47 @@ case object Pong
 </ul>
 </div>
 
-<div class="bg-gray-800 p-4 rounded text-xs font-mono">
+<div class="bg-red-800 p-4 rounded text-xs font-mono">
   <div class="text-orange-400 opacity-50 mb-2">// El compilador te avisará:</div>
   
   msg match <br>
   &nbsp;&nbsp;case Pong => "Ok" <br>
   &nbsp;&nbsp;<span v-mark.underline.red>case Ping</span> => "Error en Scala 3" <br>
-  &nbsp;&nbsp;case _: Ping => "Ahora sí"
+  &nbsp;&nbsp;<span v-mark.underline.green>case _: Ping </span> => "Ahora sí"
 </div>
 </div>
 
 <div v-click class="mt-8 p-4 bg-green-500/10 rounded border border-green-400/20 text-xs">
   <b>Tip:</b> Si el tipo tiene parámetros (aunque sea <code>Ping()</code>), es una Clase. Para ignorar el contenido, usa <code>_:</code>.
 </div>
+
+
+---
+
+# Higher-Kinded Types
+### Los Tipos que reciben otros tipos
+
+=>> `-language:higherKinds` - el plugin ya no es necesario
+
+=>> Type Lambdas de primera clase : Nativo operador =>> 
+
+=>> Bounds 
+```scala {all}
+type NL[N <: Number] =>> List[N]
+```
+
+=>> Trata Tipos como si fueran funciones
+
+
+```scala {all}
+
+import cats.data.{NonEmptyChain, Validated}
+import cats.effect.IO
+import cats.syntax.validated.*
+import cats.Applicative
+
+val validationApplicative = Applicative[IO].compose[[A] =>> Validated[NonEmptyChain[DomainError], A]]
+```
 
 ---
 
