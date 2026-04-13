@@ -160,7 +160,7 @@ layout: center
     <h3 class="text-purple-400 font-bold mb-2 text-left">🌉 Construyendo el Puente</h3>
     <p class="text-xs text-left">Uso estratégico de CrossVersion.for3Use2_13
     <code>
-    libraryDependencies += ("org.bar" %% "bar" % "1.0.0").cross(CrossVersion.for3Use2_13)
+    ("com.github.t3hnar" %% "scala-bcrypt" % "4.3.0").cross(CrossVersion.for3Use2_13)
     </code> para mantener la paz con el ecosistema de librerías.</p>
   </div>
 </div>
@@ -205,6 +205,8 @@ Añade esta línea en tu archivo project/plugins.sbt:
 addSbtPlugin("ch.epfl.scala" % "sbt-scala3-migrate" % "0.7.5")
 ```
 
+<img src="/img/sbt_plugin.png" class="w-600 mx-auto my-4 rounded-lg shadow-md" alt="Image description" />
+
 <div class="mt-8 grid grid-cols-2 gap-4 text-xs font-mono text-left">
   <div v-click class="p-3 border border-orange-400/30 rounded bg-orange-400/5">1. migrateDependencies project</div>
   <div v-click class="p-3 border border-blue-400/30 rounded bg-blue-400/5 text-left">2. migrateScalacOptions project</div>
@@ -218,12 +220,25 @@ layout: center
 ---
 
 # Destacar temas tecnicos de la migración
- Ahora sí, ya podemos hablar un poco de lo que hemos vivido durante ese proceso.
+ ¡Ahora sí, ya podemos hablar un poco de lo que hemos vivido durante esta aventura!
 
 ---
 
 # Implicits ➔ Contextual Abstractions
-### El cambio de mentalidad más profundo
+### El concepto lo más sobrecargado en Scala 2.x
+
+* Contexto ``` *()*```
+* Instancias de Type Class ```implicit val stringShow: Formatter[T] ``` 
+* Extensions methods ```implicit class ```
+* Conversion de tipos automatica ``` implicit def ...```
+* implicitly Obtener instancias del contexto ```scala  val formatter = implicitly[Formatter[T]] ```
+
+
+---
+
+# Implicits ➔ Contextual Abstractions
+### El concepto lo más sobrecargado en Scala 2.x
+
 
 <div grid="~ cols-2 gap-4">
 <div>
