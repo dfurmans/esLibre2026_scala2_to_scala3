@@ -453,6 +453,59 @@ case object Pong
 
 ---
 
+# Derivación
+### El mecanismo nativo de `scala.deriving.Mirror` en Scala 3
+
+<div grid="~ cols-2 gap-10" class="mt-8">
+
+<div class="space-y-4">
+  <div v-click class="p-4 border-l-4 border-purple-500 bg-purple-500/5 rounded-r-lg text-left">
+    <h4 class="font-bold text-purple-400 mb-2">Instancias Automáticas</h4>
+    <p class="text-xs">La derivación ya no depende de macros externas pesadas, sino de una representación genérica generada por el compilador.</p>
+  </div>
+  
+  <div v-click class="text-[11px]">
+
+```scala {all}
+import pureconfig.*
+
+// Derivación automática nativa
+sealed trait RepositoryTypeVariant 
+  derives ConfigReader
+```
+
+  </div>
+</div>
+
+<div v-click class="p-4 border-l-4 border-red-500 bg-red-500/5 rounded-r-lg text-left">
+  <div class="flex items-center gap-2 mb-4 text-red-500">
+    <div class="i-carbon-warning-alt text-2xl" />
+    <h4 class="font-bold">¡OJO, Peligro!</h4>
+  </div>
+  
+  <ul class="space-y-6 text-xs">
+    <li class="flex gap-3">
+      <div class="i-carbon-settings-adjust text-blue-400 mt-1 flex-none" />
+      <div>
+        <b class="text-blue-400">Scalac:</b> <code>-Xmax-inlines:100</code> <br>
+        <span class="opacity-60 text-[10px]">Obligatorio para evitar fallos en derivaciones complejas de PureConfig o Smithy4s.</span>
+      </div>
+    </li>
+    <li class="flex gap-3">
+      <div class="i-carbon-import-export text-green-400 mt-1 flex-none" />
+      <div>
+        <b class="text-green-400">Imports:</b> <code>import ...{*, given}</code> <br>
+        <span class="opacity-60 text-[10px]">Necesario para que las instancias derivadas sean visibles en el contexto actual.</span>
+      </div>
+    </li>
+  </ul>
+</div>
+
+</div>
+
+
+---
+
 # Higher-Kinded Types
 ### Los Tipos que reciben otros tipos
 
@@ -496,7 +549,15 @@ val validationApplicative = Applicative[IO].compose[[A] =>> Validated[NonEmptyCh
   
   <div v-click class="flex gap-4 items-center p-4 bg-gray-500/5 rounded">
     <div class="i-carbon-cloud-satellite text-3xl text-orange-400" />
-    <div class="text-sm">Nuevas <code>scalacOptions</code> específicas para avisos de migración y descarte de valores.</div>
+    <div class="text-sm text-left">
+      <b>Configuración técnica de <code>scalacOptions</code>:</b>
+      <div class="grid grid-cols-2 gap-x-10 mt-2 font-mono text-[10px] opacity-80 text-left">
+        <div>• -source:3.3-migration</div>
+        <div>• -Xignore-scala2-macros</div>
+        <div>• -Xmax-inlines:100</div>
+        <div>• -explain</div>
+      </div>
+    </div>
   </div>
 </div>
 
