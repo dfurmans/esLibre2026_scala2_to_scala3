@@ -72,7 +72,7 @@ layout: center
 
 # Érase una vez...
 ### ...una base de código en <span v-mark.underline.orange>Scala 2.13.x</span>
-<div v-click>y un equipo ambicioso que quería<span v-mark.underline.orange>dar el salto</span>
+<div v-click>y un equipo ambicioso que quería<span v-mark.underline.orange> dar el salto</span>
 </div>
 
 <div v-click class="mt-10 opacity-80 italic">
@@ -242,7 +242,7 @@ import scala.language.implicitConversions
 implicit def intToString(i: Int): String = i.toString
 ```
 
-* implicitly Obtener instancias del contexto ```val formatter = implicitly[Formatter[T]] ```
+* implicitamente obtener uan instancia del contexto ```val formatter = implicitly[Formatter[T]] ```
 
 
 ---
@@ -284,7 +284,7 @@ trait Formatter[T] { // Type Class
 * Conversion de tipos automatica  
 ``` given Conversion[Int, String] with def apply(i: Int): String = i.toString ```
 
-Implicitly Obtener instancias del contexto ```val formatter = summon[Formatter[T]] ```
+implicitamente obtener una instancia del contexto ```val formatter = summon[Formatter[T]] ```
 
 ---
 
@@ -320,20 +320,62 @@ Implicitly Obtener instancias del contexto ```val formatter = summon[Formatter[T
 ---
 
 # Macros & Metaprogramming
-### Un paso por una montaña muy picosa
+### "Un paseo" por una montaña muy picosa
 
-1. excluir .tasty  los archivos .tasty
-2. ...
+<div grid="~ cols-2 gap-10" class="mt-8">
+
+<div class="space-y-4">
+  <div v-click class="flex gap-4 items-start p-4 bg-red-400/10 border-l-4 border-red-500 rounded-r-lg">
+    <div class="i-carbon-warning text-2xl text-red-500 flex-none mt-1" />
+    <div class="text-left">
+      <h4 class="font-bold text-red-400">El Problema: TASTY</h4>
+      <p class="text-xs mt-1">Metadata pesada del compilador que viaja en el JAR por defecto.</p>
+    </div>
+  </div>
+
+  <div v-click class="flex gap-4 items-start p-4 bg-orange-400/10 border-l-4 border-orange-500 rounded-r-lg">
+    <div class="i-carbon-cloud-ceiling text-2xl text-orange-500 flex-none mt-1" />
+    <div class="text-left">
+      <h4 class="font-bold text-orange-400">Impacto en CI/CD</h4>
+      <p class="text-xs mt-1">El JAR creció en <b>400MB</b>, quemando la cuota de JFrog.</p>
+    </div>
+  </div>
+</div>
+
+<div v-click class="space-y-4">
+  <div class="p-4 bg-green-400/10 border-l-4 border-green-500 rounded-r-lg">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="i-carbon-checkmark-filled text-xl text-green-500" />
+      <h4 class="font-bold text-green-400">Solución: MergeStrategy.discard</h4>
+    </div>
+    <p class="text-[10px] mb-4 text-left">Eliminar los archivos <code>.tasty</code> durante el assembly si no se necesitan en runtime.</p>
+    
+```scala {all}
+...
+assembly / assemblyMergeStrategy := {
+  case PathList(ps @ _*) 
+    if ps.last.endsWith(".tasty") => 
+      MergeStrategy.discard
+...
+}
+```
+    </div>
+  </div>
+</div>
+
 
 ---
 
 # Data Modeling: Opaque Types & Enums/ADTs
 ### Seguridad sin boxing al cruzar fronteras genéricas
 
-<div grid="~ cols-2 gap-10">
-<div>
-  <h3 class="text-red-400 mb-4">Opaque Types</h3>
-  <p class="text-xs">Adiós a los Value Classes (<code>AnyVal</code>) y su overhead.</p>
+<div grid="~ cols-2 gap-10" class="mt-4">
+
+<div class="p-6 border-l-4 border-red-500 bg-red-400/5 rounded-r-xl text-left">
+  <div class="flex items-center gap-2 mb-4">
+    <div class="i-carbon-cube text-2xl text-red-500" />
+    <h3 class="text-red-400 font-bold text-sm">Opaque Types</h3>
+  </div>
   
 ```scala {all}
 opaque type MsgUID = String
@@ -341,19 +383,36 @@ opaque type MsgUID = String
 object MsgUID:
   def apply(s: String): MsgUID = s
 ```
-<p class="text-[10px] mt-2 opacity-60 italic">Cero huella en memoria, 100% tipado.</p>
+<p class="text-[9px] mt-2 opacity-60 italic text-right">Cero huella en memoria, 100% tipado.</p>
 </div>
 
-<div v-click>
-  <h3 class="text-green-400 mb-4">Native Enums</h3>
-  <p class="text-xs">Sustitución real de <code>sealed abstract class</code>.</p>
-
+<div class="p-6 border-l-4 border-green-500 bg-green-400/5 rounded-r-xl text-left">
+  <div class="flex items-center gap-2 mb-4">
+    <div class="i-carbon-tree-view text-2xl text-green-500" />
+    <h3 class="text-green-400 font-bold text-sm">Native Enums</h3>
+  </div>
+  
 ```scala {all}
 enum DomainError(val errorCode: String, val errorMessage: String) extends NoStackTrace:
-  case UnknownError(msg: String)             extends DomainError("E000", msg)
-  case InvalidDomainCode                  extends DomainError("E001", "Invalid Domain Code")
+  case UnknownError(msg: String)   extends DomainError("E000", msg)
+  case InvalidDomainCode           extends DomainError("E001", "Invalid Code")
 ```
-<p class="text-[10px] mt-2 opacity-60 italic">Primer nivel de soporte para ADTs complejos.</p>
+<p class="text-[9px] mt-2 opacity-60 italic text-right">Sustitución real de sealed abstract class.</p>
+</div>
+
+</div>
+
+<div v-click class="mt-4 p-6 border-l-4 border-green-500 bg-green-400/5 rounded-r-xl text-left">
+
+<div class="text-[11px]">
+
+```scala {all}
+val error = DomainError.UnknownError("Unknown error")
+error match
+  case DomainError.UnknownError(msg) => s"Handling unknown error: $msg"
+  case DomainError.InvalidDomainCode => "Handling an invalid domain code."
+```
+
 </div>
 </div>
 
@@ -427,7 +486,7 @@ val validationApplicative = Applicative[IO].compose[[A] =>> Validated[NonEmptyCh
 <div class="space-y-4 mt-8">
   <div v-click class="flex gap-4 items-center p-4 bg-gray-500/5 rounded">
     <div class="i-carbon-flow-connection text-3xl text-blue-400" />
-    <div class="text-sm">Actualización de <b>Scoverage</b> (v2.3+) para soporte nativo de Scala 3.</div>
+    <div class="text-sm">Actualización de plugin <b>scoverage</b> (v2.3+) para soporte nativo de Scala 3.</div>
   </div>
   
   <div v-click class="flex gap-4 items-center p-4 bg-gray-500/5 rounded">
@@ -448,6 +507,8 @@ val validationApplicative = Applicative[IO].compose[[A] =>> Validated[NonEmptyCh
 https://docs.scala-lang.org/scala3/guides/migration/compatibility-intro.html
 
 https://docs.scala-lang.org/scala3/guides/migration/scala3-migrate.html
+
+https://docs.scala-lang.org/scala3/guides/tasty-overview.html
 
 ---
 
